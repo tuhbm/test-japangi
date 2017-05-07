@@ -29,22 +29,27 @@ var vendingAction = {
         for (var i = 0; i < this.products.length; i++) {
             var beverage = this.products[i];
             if(beverage.name === beverageName) {
+                if(!beverage.quantity){
+                    return '입력하신 음료가 다 떨어졌습니다.';
+                }
                 beverage.quantity -= 1;
                 this.moneyBox -= beverage.price;
                 this.changeBox += beverage.price;
-                return '음료수 '+beverageName+'이/가 나왔습니다.' +'\n' + '잔액이 '+this.moneyBox+'남았습니다.'; ;
+                return '음료수 '+beverageName+'가 나왔습니다.' +'\n' + '잔액이 '+this.moneyBox+'남았습니다.';
+            }else{
+                return '입력하신 음료가 없습니다.'
             }
         }
     },
     getChange : function(){
-        return '잔액이 '+this.moneyBox+'반환 되었습니다.'
+        return '잔액이 '+this.moneyBox+'반환 되었습니다.';
     },
     giveBeverage : function (beverageName,quantity){
         for (var i = 0; i < this.products.length; i++) {
             var beverage = this.products[i];
             if(beverage.name === beverageName) {
                 beverage.quantity += quantity;
-                return '음료수 '+beverageName+'의/가 총 갯수는'+beverage.quantity+'가 되었습니다.'; ;
+                return '음료수 '+beverageName+'의 총 갯수는'+beverage.quantity+'가 되었습니다.';
             }
         }
     },
@@ -70,7 +75,7 @@ var vendingMachine1 = new VendingMachine([
     {
         name: '콜라',
         price: 500,
-        quantity: 20
+        quantity: 0
     },
     {
         name: '사이다',
@@ -84,6 +89,29 @@ var vendingMachine1 = new VendingMachine([
     },
     {
         name: '포카리스웨트',
+        price:800,
+        quantity: 20
+    }
+]);
+
+var vendingMachine2 = new VendingMachine([
+    {
+        name: '캔커피',
+        price: 500,
+        quantity: 0
+    },
+    {
+        name: '암바사',
+        price: 700,
+        quantity: 30
+    },
+    {
+        name: '식혜',
+        price:800,
+        quantity: 20
+    },
+    {
+        name: '비타500',
         price:800,
         quantity: 20
     }
