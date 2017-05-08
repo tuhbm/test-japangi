@@ -18,10 +18,22 @@
  >>거스름돈 계산
  > 거스름돈 배출
  */
-//Controller
 var vendingAction = {
     giveMoney : function (money){
-        this.moneyBox = money;
+        this.moneyBox += money;
+        var initMoney = this.moneyBox;
+        if(initMoney < 500){
+            return '현재가능한 음료가 없습니다.';
+        }
+        var agreeProducts  = this.products.filter(function(array){
+            var possibleProducts = array.price <= initMoney;
+            return possibleProducts;
+        });
+
+        var possibleBeverage = agreeProducts.map(function(array){
+            return array.name;
+        });
+        return '현재 구매 가능한 음료는 '+possibleBeverage+' 입니다.';
     },
     getBeverage : function(beverageName) {
         if(!this.power) throw new Error('전원이 꺼져 있습니다. 전원을 켜주세요.');
@@ -30,19 +42,22 @@ var vendingAction = {
             var beverage = this.products[i];
             if(beverage.name === beverageName) {
                 if(!beverage.quantity){
-                    return '입력하신 음료가 다 떨어졌습니다.';
+                    return '해당 음료가 모두 소진되었습니다.';
                 }
                 beverage.quantity -= 1;
                 this.moneyBox -= beverage.price;
-                this.changeBox += beverage.price;
-                return '음료수 '+beverageName+'가 나왔습니다.' +'\n' + '잔액이 '+this.moneyBox+'남았습니다.';
-            }else{
-                return '입력하신 음료가 없습니다.'
+                this.profitBox += beverage.price;
+                return '음료수 '+beverageName+'이/가 나왔습니다.' +'\n' + '잔액이 '+this.moneyBox+'남았습니다.';
             }
         }
     },
     getChange : function(){
-        return '잔액이 '+this.moneyBox+'반환 되었습니다.';
+        var changeMoney = this.moneyBox;
+        this.moneyBox = 0;
+        if(!changeMoney){
+            return '반환 될 잔액이 없습니다.'
+        }
+        return '잔액이 '+changeMoney+'반환 되었습니다.';
     },
     giveBeverage : function (beverageName,quantity){
         for (var i = 0; i < this.products.length; i++) {
@@ -60,17 +75,13 @@ var vendingAction = {
         this.power = false;
     }
 };
-
-
-//Model
 function VendingMachine(products){
     this.power =  true;
     this.moneyBox = 0;
-    this.changeBox = 2000;
+    this.profitBox = 0;
     this.products = products;
 }
 VendingMachine.prototype = vendingAction;
-
 var vendingMachine1 = new VendingMachine([
     {
         name: '콜라',
@@ -96,9 +107,9 @@ var vendingMachine1 = new VendingMachine([
 
 var vendingMachine2 = new VendingMachine([
     {
-        name: '캔커피',
+        name: '식혜',
         price: 500,
-        quantity: 0
+        quantity: 20
     },
     {
         name: '암바사',
@@ -106,12 +117,12 @@ var vendingMachine2 = new VendingMachine([
         quantity: 30
     },
     {
-        name: '식혜',
+        name: '비타500',
         price:800,
         quantity: 20
     },
     {
-        name: '비타500',
+        name: '오로나민씨',
         price:800,
         quantity: 20
     }
